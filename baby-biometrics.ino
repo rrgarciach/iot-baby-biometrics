@@ -26,24 +26,29 @@ void setup() {
 
 void loop() {
     if (millis() % (delaySecs*1000) == 0) sendData();
+    printData();
 }
 
 void readTemperature() {
     temp = (analogRead(pinLM35)/1024.0)*500;    // Reads analog input and calculates it.    if (temp > maxTemp || temp < minTemp) {
 }
 
-void readPulse() {
+void printData() {
     if (QS == true) {               // A Heartbeat Was Found. BPM and IBI have been Determined:
                                     // Quantified Self "QS" true when Arduino finds a heartbeat
         Serial.print("BPM: ");
         Serial.println(BPM);        // prints BPM for debuging.
         QS = false;                 // reset the Quantified Self flag for next time    
     }
+    if (millis() % (delaySecs*1000) == 0) {
+        Serial.print("Temperature: ");
+        Serial.println(temp);
+    }
 }
 
 void sendData() {
+    Serial.print("Sending data...");
     readTemperature();              // Reads LM35DZ and calculates value to be stored in temp variable.
-    readPulse();                    // Reads Pulse sensor BPM
     bt.print("t");
     bt.print(temp);
     bt.print(";");
@@ -51,4 +56,5 @@ void sendData() {
     bt.print(BPM);
     bt.print(";");
     bt.println();
+    Serial.println(" Done.");
 }
